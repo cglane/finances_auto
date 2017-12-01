@@ -33,7 +33,7 @@ class Command(BaseCommand):
                     wks.append_table(values=list(row))
                     print (' added')
                     pass
-            except:
+            except ValueError as e:
                 print (row, 'fail')
 
     def handle(self, *args, **options):
@@ -49,6 +49,4 @@ class Command(BaseCommand):
             self.addSheet(df)
         except ValueError as e:
             print 'error'
-            time.sleep(200)
-            self.handle()
 

@@ -1,5 +1,4 @@
 import json
-
 import pygsheets
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
@@ -11,6 +10,7 @@ from finances.models import Transaction
 from finances.serializers import TransactionSerializer
 from finances.lib.preAmex import  amexCSV
 from finances.lib.preCapitolOne import CapitolOneCSV
+from finances.lib.preBOA import BOACSV
 
 class MainView(TemplateView):
     template_name = "main.html"
@@ -48,20 +48,22 @@ class ReadCSV(APIView):
     """Receive list of csv lines from browser and parse
         based on the credit card company
     """
-    # pred = PredictionModel()
-    # pred.train_data()
+    pred = PredictionModel()
+    pred.train_data()
     def post(self, request):
         body_unicode = request.body.decode('utf-8')
         data = json.loads(body_unicode)
-        parsing_options = ('AMEX', 'CapitolOne')
-
-        if data['type'] in parsing_options:
+        if data['type']:
             if data['type'] == 'AMEX':
                 fileParser = amexCSV(data['csvList'])
                 dict_list = fileParser.readFile()
             elif data['type'] == 'CapitolOne':
                 fileParser = CapitolOneCSV(data['csvList'])
                 dict_list = fileParser.readFile()
+            elif data['type'] == 'BOA':
+                fileParser = BOACSV(data['csvList'])
+                dict_list = fileParser.readFile()
+                print dict_list
             try:
                 print 'finished training'
                 keys, rows = self.pred.describe_transactions(dict_list)
@@ -79,17 +81,21 @@ class UpdateData(APIView):
         gc = pygsheets.authorize()
         body_unicode = request.body.decode('utf-8')
         data = json.loads(body_unicode)
-        print data
         if isinstance(data['tableRows'], list):
-            print data['title']
             spread_sheet = gc.create(data['title'])
             wks = spread_sheet[0]
-            for item in data['tableRows']:
-                print item
-                wks.append_table(values=item)
-                # data_dict = dict(zip(data['tableKeys'], item))
-                # transaction = Transaction(**data_dict)
-                # transaction.save()
+            for row in data['tableRows']:
+                data_dict = dict(zip(data['tableKeys'], row))
+                exists_db = Transaction.objects.filter(
+                    date=data_dict['date'],
+                    amount=data_dict['amount'],
+                    location=data_dict['location']
+                )
+                if not exists_db:
+                    wks.append_table(values=row)
+                    print data_dict
+                    transaction = Transaction(**data_dict)
+                    transaction.save()
             return JsonResponse({'sucess': 'true'}, status=200)
         return JsonResponse({'success': 'false'}, status=400)
 
@@ -101,15 +107,19 @@ class UpdateData(APIView):
         data = json.loads(body_unicode)
         if isinstance(data['tableRows'], list):
             spread_sheet = gc.open(data['title'])
-            print (spread_sheet, 'spread')
             wks = spread_sheet[0]
-            print wks
-            for item in data['tableRows']:
-                print item
-                wks.append_table(values=item)
-                # data_dict = dict(zip(data['tableKeys'], item))
-                # transaction = Transaction(**data_dict)
-                # transaction.save()
+            for row in data['tableRows']:
+                data_dict = dict(zip(data['tableKeys'], row))
+                exists_db = Transaction.objects.filter(
+                    date=data_dict['date'],
+                    amount=data_dict['amount'],
+                    location=data_dict['location']
+                )
+                if not exists_db:
+                    wks.append_table(values=row)
+                    print (data_dict, 'put')
+                    transaction = Transaction(**data_dict)
+                    transaction.save()
             return JsonResponse({'sucess': 'true'}, status=200)
         return JsonResponse({'success': 'false'}, status=400)
 

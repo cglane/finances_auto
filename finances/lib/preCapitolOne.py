@@ -18,14 +18,15 @@ class CapitolOneCSV(object):
                 ###Ignore First Column and reverse list
                 for row in self.csvList[1:][::-1]:
                     ###Don't want to include credit card payments
-                    if any(row):
-                        if ("CAPITAL ONE ONLINE" not in row[4]):
-                            date = row[1]
+                    if "CAPITAL ONE" not in row:
+                        rowlist = row.split(',')
+                        if any(rowlist):
+                            date = rowlist[1]
                             d = datetime.datetime.strptime(date, '%m/%d/%Y')
                             date = datetime.date.strftime(d, "%Y-%m-%d")
 
-                            value = self.getValue(row)
-                            location = row[4]
+                            value = self.getValue(rowlist)
+                            location = rowlist[4]
                             rtrn_list.append(
                                 OrderedDict(
                                     zip(

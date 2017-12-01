@@ -3,7 +3,7 @@ import React from 'react';
 import {pluck, keys, map} from 'ramda';
 import $ from 'jquery'
 
-import {DefaultButton, SelectField} from '../components';
+import {DefaultButton, SelectField, ProgressComp} from '../components';
 import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
 import TextField from 'material-ui/TextField';
@@ -24,10 +24,12 @@ const DisplayOptions = createReactClass({
             tableRows: this.props.tablerows,
             userSheets: [],
             newSheetProps: {},
-            appendSheetProps: {}
+            appendSheetProps: {},
+            inProgress: false
         };
     },
    getSheets() {
+        this.setState({inProgress: true})                      
         $.ajax({
             url: 'http://localhost:8000/api/v1/sheets_list/',
             type: "GET",      
@@ -41,6 +43,10 @@ const DisplayOptions = createReactClass({
                       userSheets: data
                   })
               }
+            }.bind(this),
+            error: function (xhr, ajaxOptions, thrownError) {
+                alert(xhr.responseText);
+                this.setState({inProgress: false})                  
             }.bind(this)
           });
         },
@@ -50,6 +56,7 @@ updateSheetName(title) {
     })
 },
 createNewSheet() {
+    this.setState({inProgress: true})
     const tableRows = this.state.tableRows
     const title = this.state.title
     const tableKeys = this.state.tableKeys
@@ -65,7 +72,12 @@ createNewSheet() {
         success: function (data) {
           if (data) {
               console.log(data, 'data')
+              this.setState({inProgress: false})              
           }
+        }.bind(this),
+        error: function (xhr, ajaxOptions, thrownError) {
+            alert(xhr.responseText);
+            this.setState({inProgress: false})                  
         }.bind(this)
       });
 },
@@ -75,6 +87,7 @@ updateCustomTitle(event){
     })
 },
 appendToSheet() {
+    this.setState({inProgress: true})                  
     const tableRows = this.state.tableRows
     const title = this.state.title
     const tableKeys = this.state.tableKeys
@@ -89,14 +102,21 @@ appendToSheet() {
         dataType: 'json',
         success: function (data) {
           if (data) {
+            this.setState({inProgress: false})                          
               console.log(data, 'data')
           }
+        }.bind(this),
+        error: function (xhr, ajaxOptions, thrownError) {
+            alert(xhr.responseText);
+            this.setState({inProgress: false})                  
         }.bind(this)
       });
     },
     render() {
+
         return (
             <div style={style}>
+                {this.state.inProgress ? <ProgressComp />: null}
                 <Paper style={style}zDepth={2}>
                     <h4> Append To Existing Sheet </h4>
                     <SelectField onChange={this.updateSheetName} items={pluck('name', this.state.userSheets)}/> 
