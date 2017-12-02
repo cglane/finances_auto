@@ -26,5 +26,5 @@ api_patterns = [
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/v1/', include(api_patterns, namespace='rest_framework')),
-    # url(r'^(?!(?:api|admin)/)', views.MainView.as_view()),
+    url(r'^(?!(?:api|admin)/)', views.MainView.as_view()),
 ]

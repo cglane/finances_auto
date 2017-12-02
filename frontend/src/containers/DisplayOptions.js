@@ -71,7 +71,6 @@ createNewSheet() {
         dataType: 'json',
         success: function (data) {
           if (data) {
-              console.log(data, 'data')
               this.setState({inProgress: false})              
           }
         }.bind(this),
@@ -103,7 +102,6 @@ appendToSheet() {
         success: function (data) {
           if (data) {
             this.setState({inProgress: false})                          
-              console.log(data, 'data')
           }
         }.bind(this),
         error: function (xhr, ajaxOptions, thrownError) {

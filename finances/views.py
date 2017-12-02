@@ -13,7 +13,7 @@ from finances.lib.preCapitolOne import CapitolOneCSV
 from finances.lib.preBOA import BOACSV
 
 class MainView(TemplateView):
-    template_name = "main.html"
+    template_name = "base.html"
 
 def serialize_dict(obj):
     serializer = TransactionSerializer(data=obj)
@@ -48,8 +48,8 @@ class ReadCSV(APIView):
     """Receive list of csv lines from browser and parse
         based on the credit card company
     """
-    pred = PredictionModel()
-    pred.train_data()
+    # pred = PredictionModel()
+    # pred.train_data()
     def post(self, request):
         body_unicode = request.body.decode('utf-8')
         data = json.loads(body_unicode)
@@ -63,7 +63,6 @@ class ReadCSV(APIView):
             elif data['type'] == 'BOA':
                 fileParser = BOACSV(data['csvList'])
                 dict_list = fileParser.readFile()
-                print dict_list
             try:
                 print 'finished training'
                 keys, rows = self.pred.describe_transactions(dict_list)
@@ -93,7 +92,6 @@ class UpdateData(APIView):
                 )
                 if not exists_db:
                     wks.append_table(values=row)
-                    print data_dict
                     transaction = Transaction(**data_dict)
                     transaction.save()
             return JsonResponse({'sucess': 'true'}, status=200)
@@ -117,7 +115,6 @@ class UpdateData(APIView):
                 )
                 if not exists_db:
                     wks.append_table(values=row)
-                    print (data_dict, 'put')
                     transaction = Transaction(**data_dict)
                     transaction.save()
             return JsonResponse({'sucess': 'true'}, status=200)

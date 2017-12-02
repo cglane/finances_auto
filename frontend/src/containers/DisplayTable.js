@@ -28,7 +28,6 @@ const DisplayTable = createReactClass({
     }
     },
  render() {
-   console.log(this.props, 'props')
  return (
   <div>
   <Table key={this.props.value}>
