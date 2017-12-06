@@ -31,7 +31,7 @@ class amexCSV(object):
         fileList = []
         if isinstance(self.csvLines, list):
             ##Reverse Order to have oldest transactions first
-            for row in self.csvLines[::-1]:
+            for row in self.csvLines:
                 formattedRow = self.splitRow(row)
                 if formattedRow:
                     fileList.append(formattedRow)

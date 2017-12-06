@@ -48,8 +48,9 @@ class ReadCSV(APIView):
     """Receive list of csv lines from browser and parse
         based on the credit card company
     """
-    # pred = PredictionModel()
-    # pred.train_data()
+    pred = PredictionModel()
+    pred.train_descriptions()
+    pred.train_source()
     def post(self, request):
         body_unicode = request.body.decode('utf-8')
         data = json.loads(body_unicode)
@@ -65,6 +66,7 @@ class ReadCSV(APIView):
                 dict_list = fileParser.readFile()
             try:
                 print 'finished training'
+                print (dict_list, 'dict list')
                 keys, rows = self.pred.describe_transactions(dict_list)
                 return JsonResponse({'keys':keys, 'rows': rows}, status=200, safe=False)
             except ValueError as e:

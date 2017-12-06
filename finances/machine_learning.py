@@ -13,8 +13,20 @@ class PredictionModel(object):
                 Transaction.objects.filter(location__isnull=False, description__isnull=False).values()
             )
         )
-
-    def train_data(self):
+    def train_source(self):
+        ##Train Vectorizer
+        location_list = self.df['location'].tolist()
+        location_list = self.vectorizer.fit_transform(location_list).toarray().tolist()
+        ##Add amount to vectors
+        amount_list = self.df['amount'].tolist()
+        train_list = [list(x) + [amount_list[itr]] for itr, x in enumerate(location_list)]
+        ##Initialize Linear SVC
+        self.source_clf = svm.LinearSVC(random_state=0)
+        print 'fitting'
+        self.source_clf.fit(train_list, self.df['source'])
+        print 'done fitting'
+        return self.vectorizer, self.source_clf
+    def train_descriptions(self):
         self.vectorizer = CountVectorizer()
         ##Train Vectorizer
         location_list = self.df['location'].tolist()
@@ -23,11 +35,11 @@ class PredictionModel(object):
         amount_list  = self.df['amount'].tolist()
         train_list = [list(x) + [amount_list[itr]] for itr, x in enumerate(location_list)]
         ##Initialize Linear SVC
-        self.clf = svm.LinearSVC(random_state=0)
+        self.description_clf = svm.LinearSVC(random_state=0)
         print 'fitting'
-        self.clf.fit(train_list, self.df['description'])
+        self.description_clf.fit(train_list, self.df['description'])
         print 'done fitting'
-        return self.vectorizer, self.clf
+        return self.vectorizer, self.description_clf
 
     def describe_transactions(self, transactions):
         """"Expecting transaction to be in format
@@ -46,9 +58,10 @@ class PredictionModel(object):
                 ##Add Amount to vector
                 location_list.append(float(item['amount']))
                 ##Predict based on Vector + amount
-                description = self.clf.predict([location_list])[0]
+                description = self.description_clf.predict([location_list])[0]
+                source = self.source_clf.predict([location_list])[0]
                 item.update({'description': description})
-                item.update({'source': 'Salary'})
+                item.update({'source': source})
                 rtrnList.append(item)
         keys = rtrnList[0].keys()
         rows = [x.values() for x in rtrnList]
