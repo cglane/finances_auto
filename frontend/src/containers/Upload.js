@@ -28,8 +28,6 @@ handleChange(fileType) {
     });
 },
 sendToServer(type, csvList){
-    console.log(type, 'type')
-    console.log(csvList, 'list')
     $.ajax({
         url: 'http://localhost:8000/api/v1/read_csv',
         type: "POST",      
@@ -39,18 +37,21 @@ sendToServer(type, csvList){
         crossDomain: true,        
         dataType: 'json',
         success: function (data) {
-          if (data) {
-              console.log(data, 'data')
-            this.props.handleChange('Results', data['keys'], data['rows'])
-          }
-        }.bind(this)
+            if (data.keys) {
+               this.props.handleChange('Results', data['keys'], data['rows'])
+              }
+        }.bind(this),
+        error: function (data) {
+           if (data && data.responseJSON) {
+                alert(data.responseJSON.msg)
+           }
+         }
       });
     },
 handleFiles(files){
         var reader = new FileReader();
         reader.onload = function(e) {
             const allTextLines = reader.result.split(/\r\n|\n/);
-            console.log(allTextLines, 'allTextLines')
             this.sendToServer(this.state.fileType, allTextLines)
         }.bind(this)
       reader.readAsText(files[0]);

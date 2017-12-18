@@ -19,23 +19,19 @@ const styles = {
     fontWeight: 400,
   },
 };
-let tableData = [{"Date": 'date', "Amount": '1', 'Description': 'description', 'Location':'location'}]
 
-function handleActive(tab) {
-//  alert(`A tab with this route property ${tab.props['data-route']} was activated.`);
-}
+
 
 const App = createReactClass({
  getInitialState() {
         return {
-            value: 'Upload',
-            tableKeys: ['Date', 'Amount', 'Location', 'Description', 'Source'],
-            tableRows: [['2017-10-10', '-10.2', 'Walmart', 'Shoes', 'Salary']]
+            value: 'Results',
+            tableKeys: ['date', 'amount', 'location', 'description', 'source', 'notes'],
+            tableRows: [['2017-10-10', '-10.2', 'Walmart', 'Shoes', 'Salary', '']]
         };
     },
   handleChange(value, tableKeys, tableRows) {
       // Have to set the table values before switching the tab
-      console.log(tableKeys, 'keys')
       console.log(tableRows, 'rows')
       if (tableRows && tableKeys[0]){
         this.setState({

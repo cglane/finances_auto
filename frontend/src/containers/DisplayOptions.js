@@ -2,7 +2,7 @@
 import React from 'react';
 import {pluck, keys, map} from 'ramda';
 import $ from 'jquery'
-
+import Dialog from 'material-ui/Dialog';
 import {DefaultButton, SelectField, ProgressComp} from '../components';
 import Divider from 'material-ui/Divider';
 import Paper from 'material-ui/Paper';
@@ -16,7 +16,8 @@ const style = {
 
   
 const DisplayOptions = createReactClass({
- getInitialState() {    
+ getInitialState() {
+ console.log(this.props.tablerows, 'rows')
     this.getSheets()
         return {
             value: 'Actions',
@@ -25,7 +26,8 @@ const DisplayOptions = createReactClass({
             userSheets: [],
             newSheetProps: {},
             appendSheetProps: {},
-            inProgress: false
+            inProgress: false,
+            openDialog: false,
         };
     },
    getSheets() {
@@ -71,7 +73,14 @@ createNewSheet() {
         dataType: 'json',
         success: function (data) {
           if (data) {
-              this.setState({inProgress: false})              
+              this.setState({inProgress: false})
+              this.setState({openDialog: true})
+
+              //Close Modal
+              setTimeout(() => {
+               this.setState({openDialog: false})
+
+            }, 2000)
           }
         }.bind(this),
         error: function (xhr, ajaxOptions, thrownError) {
@@ -101,7 +110,14 @@ appendToSheet() {
         dataType: 'json',
         success: function (data) {
           if (data) {
-            this.setState({inProgress: false})                          
+
+            this.setState({inProgress: false})
+            this.setState({openDialog: true})
+            setTimeout(() => {
+               this.setState({openDialog: false})
+
+            }, 2000)
+
           }
         }.bind(this),
         error: function (xhr, ajaxOptions, thrownError) {
@@ -115,6 +131,14 @@ appendToSheet() {
         return (
             <div style={style}>
                 {this.state.inProgress ? <ProgressComp />: null}
+                  <Dialog
+                   title="Success!"
+                   modal={false}
+                   open={this.state.openDialog}
+                   onRequestClose={this.handleClose}
+                    >
+          Your Action has been successful
+        </Dialog>
                 <Paper style={style}zDepth={2}>
                     <h4> Append To Existing Sheet </h4>
                     <SelectField onChange={this.updateSheetName} items={pluck('name', this.state.userSheets)}/> 

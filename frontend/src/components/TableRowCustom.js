@@ -31,7 +31,8 @@ return(
                        <TextField
                         id={`${props.rownum}: ${index}`} 
                           onChange={(e)=> props.onChange(props.rownum, index, e.target.value)} 
-                          value={item}                     
+                          value={item}
+                          hintText={props.hints[index]}
                        />
                       </TableRowColumn>
                       )

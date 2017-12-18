@@ -51,6 +51,7 @@ class ReadCSV(APIView):
     pred = PredictionModel()
     pred.train_descriptions()
     pred.train_source()
+
     def post(self, request):
         body_unicode = request.body.decode('utf-8')
         data = json.loads(body_unicode)
@@ -66,12 +67,11 @@ class ReadCSV(APIView):
                 dict_list = fileParser.readFile()
             try:
                 print 'finished training'
-                print (dict_list, 'dict list')
                 keys, rows = self.pred.describe_transactions(dict_list)
                 return JsonResponse({'keys':keys, 'rows': rows}, status=200, safe=False)
             except ValueError as e:
                 print e
-                return JsonResponse({'sucess': 'false'}, status=400)
+                return JsonResponse({'success': 'false', 'msg': str(e)}, status=400)
             # return JsonResponse(dict_list, status=200, safe=False)
         return JsonResponse({'success': 'false', 'msg': 'wrong type'}, status=400)
 
@@ -88,15 +88,15 @@ class UpdateData(APIView):
             for row in data['tableRows']:
                 data_dict = dict(zip(data['tableKeys'], row))
                 exists_db = Transaction.objects.filter(
-                    date=data_dict['date'],
-                    amount=data_dict['amount'],
-                    location=data_dict['location']
+                    date=data_dict.get('date'),
+                    amount=data_dict.get('amount'),
+                    location=data_dict.get('location')
                 )
                 if not exists_db:
                     wks.append_table(values=row)
                     transaction = Transaction(**data_dict)
                     transaction.save()
-            return JsonResponse({'sucess': 'true'}, status=200)
+            return JsonResponse({'success': 'true'}, status=200)
         return JsonResponse({'success': 'false'}, status=400)
 
     def put(self, request):
@@ -111,14 +111,14 @@ class UpdateData(APIView):
             for row in data['tableRows']:
                 data_dict = dict(zip(data['tableKeys'], row))
                 exists_db = Transaction.objects.filter(
-                    date=data_dict['date'],
-                    amount=data_dict['amount'],
-                    location=data_dict['location']
+                    date=data_dict.get('date'),
+                    amount=data_dict.get('amount'),
+                    location=data_dict.get('location')
                 )
                 if not exists_db:
                     wks.append_table(values=row)
                     transaction = Transaction(**data_dict)
                     transaction.save()
-            return JsonResponse({'sucess': 'true'}, status=200)
+            return JsonResponse({'success': 'true'}, status=200)
         return JsonResponse({'success': 'false'}, status=400)
 

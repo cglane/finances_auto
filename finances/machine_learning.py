@@ -62,8 +62,10 @@ class PredictionModel(object):
                 source = self.source_clf.predict([location_list])[0]
                 item.update({'description': description})
                 item.update({'source': source})
+                item.update({'notes': ''})
                 rtrnList.append(item)
-        keys = rtrnList[0].keys()
-        rows = [x.values() for x in rtrnList]
-        print rows
-        return keys , rows
+        if rtrnList:
+            keys = rtrnList[0].keys()
+            rows = [x.values() for x in rtrnList]
+            return keys , rows
+        raise ValueError('No new transactions')

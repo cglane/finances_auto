@@ -8,8 +8,9 @@ class Transaction(models.Model):
     amount = models.FloatField()
     description = models.CharField(max_length=30)
     source = models.CharField(max_length=30)
-    user = models.ForeignKey(User, unique=False, default=1, on_delete=models.CASCADE)
+    notes = models.TextField()
 
+    user = models.ForeignKey(User, unique=False, default=1, on_delete=models.CASCADE)
     class Meta:
         verbose_name_plural = 'transactions'
 

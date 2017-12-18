@@ -13,6 +13,14 @@ const createReactClass = require('create-react-class');
  */
  
 
+const hintFields = [
+       '',
+       '',
+       '',
+       '',
+       "Work Related, BankSC, Salary, etc.",
+       "Landscaping, New Computer"
+]
 const DisplayTable = createReactClass({  
   getInitialState() {
          return {
@@ -46,12 +54,12 @@ const DisplayTable = createReactClass({
     <TableBody>
    {this.state.tableRows.map((row, index) => {
         return (
-            <TableRowCustom removeRow={this.removeRow} onChange={this.updateTable} rownum={index} key={index} row={row}/>
+            <TableRowCustom hints={hintFields} removeRow={this.removeRow} onChange={this.updateTable} rownum={index} key={index} row={row}/>
         )
    })}
        </TableBody>
   </Table>
-  <DefaultButton label = "Continue" tablerows={this.state.tableRows} tablekeys={this.state.tableKeys} onSomeEvent= {this.props.handleChange} path="Actions">  </DefaultButton>
+  <DefaultButton label = "Continue" tablerows={this.state.tableRows} tablekeys={this.state.tableKeys} onSomeEvent= { () => {this.props.handleChange('Actions', this.state.headers, this.state.tableRows)}} path="Actions">  </DefaultButton>
 
 </div>
 )
