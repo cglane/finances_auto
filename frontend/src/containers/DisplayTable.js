@@ -20,6 +20,14 @@ const DisplayTable = createReactClass({
              tableRows: this.props.tablerows            
          };
      },
+  removeRow(rowIndex) {
+        const rows = this.state.tableRows;
+        rows.splice(rowIndex, 1)
+        this.setState({
+            tableRows: rows
+        })
+
+  },
   updateTable(row, column, value) {
     if (is(Number, row) && is(Number, column)) {
       let tableRows = [ ...this.state.tableRows ];
@@ -38,7 +46,7 @@ const DisplayTable = createReactClass({
     <TableBody>
    {this.state.tableRows.map((row, index) => {
         return (
-            <TableRowCustom onChange={this.updateTable} rownum={index}key={index} row={row}/>
+            <TableRowCustom removeRow={this.removeRow} onChange={this.updateTable} rownum={index} key={index} row={row}/>
         )
    })}
        </TableBody>
