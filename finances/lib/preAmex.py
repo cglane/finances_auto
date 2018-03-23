@@ -36,7 +36,7 @@ class amexCSV(object):
                 if formattedRow:
                     fileList.append(formattedRow)
             ###Return the list backwards so it it ends with most recent purchases
-            return fileList[::-1]
+            return fileList
         else:
             print "Doc must be a list"
             return []

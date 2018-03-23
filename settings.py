@@ -22,6 +22,12 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'xj1ui3b)or6a9*x_c7gm_-ehty@ye1nkl=^4_m=rrs=&gy0sxk'
 
+
+GOOGLE_OAUTH2_CLIENT_ID="202096165736-655hc8iotb8s5ce1jcaog5qm0rpruqmb.apps.googleusercontent.com"
+GOOGLE_OAUTH2_CLIENT_SECRET="TjK-8ESB93sYCwNa87VnNurI"
+OAUTH_PATH = 'client_secret_202096165736-61qkhsbc37eth7n2lcr72h5aiacoaada.apps.googleusercontent.com.json'
+
+DEFAULT_USER = 1
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 

@@ -25,14 +25,14 @@ const styles = {
 const App = createReactClass({
  getInitialState() {
         return {
-            value: 'Results',
+            value: 'Authenticate',
+            userId: '2',
             tableKeys: ['date', 'amount', 'location', 'description', 'source', 'notes'],
             tableRows: [['2017-10-10', '-10.2', 'Walmart', 'Shoes', 'Salary', '']]
         };
     },
-  handleChange(value, tableKeys, tableRows) {
+    handleChange(value, tableKeys, tableRows, userId) {
       // Have to set the table values before switching the tab
-      console.log(tableRows, 'rows')
       if (tableRows && tableKeys[0]){
         this.setState({
           tableKeys: tableKeys,
@@ -44,6 +44,11 @@ const App = createReactClass({
           value: value,
       });
     }
+         if (userId) {
+          this.setState({
+            userId: userId,
+          })
+      }
     },
 render() {
 return (
@@ -58,13 +63,13 @@ return (
       </div>
     </Tab>
     <Tab label="Upload"  value="Upload">
-        <UploadPage handleChange={this.handleChange}/>
+        <UploadPage userId={this.state.userId} handleChange={this.handleChange}/>
     </Tab>
      <Tab label="Results"  value="Results">
         <DisplayTable key={this.state.value} tablerows={this.state.tableRows} tablekeys={this.state.tableKeys} handleChange={this.handleChange}/>
     </Tab>
      <Tab label="Actions"  value="Actions">
-        <DisplayOptions key={this.state.value} tablerows={this.state.tableRows} tablekeys={this.state.tableKeys} handleChange={this.handleChange}/>
+        <DisplayOptions userId={this.state.userId} key={this.state.value} tablerows={this.state.tableRows} tablekeys={this.state.tableKeys} handleChange={this.handleChange}/>
     </Tab>
   </Tabs>
       </MuiThemeProvider>

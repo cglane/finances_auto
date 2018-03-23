@@ -3,14 +3,20 @@ from sklearn import svm
 import pandas as pd
 from scipy.sparse import coo_matrix, hstack
 import numpy as np
+from django.contrib.auth.models import User
 # from training.lib import preAmex, preCapitolOne, preFinances
 from finances.models import Transaction
+from django.conf import settings
 
 class PredictionModel(object):
-    def __init__(self, userId=1):
+    def __init__(self, custom_user=None):
+        if custom_user and custom_user != settings.DEFAULT_USER:
+            user_ids = [settings.DEFAULT_USER, custom_user]
+        else:
+            user_ids = [settings.DEFAULT_USER]
         self.df = pd.DataFrame(
             list(
-                Transaction.objects.filter(location__isnull=False, description__isnull=False).values()
+                Transaction.objects.filter(user__in=user_ids, location__isnull=False, description__isnull=False).values()
             )
         )
     def train_source(self):
@@ -41,7 +47,7 @@ class PredictionModel(object):
         print 'done fitting'
         return self.vectorizer, self.description_clf
 
-    def describe_transactions(self, transactions):
+    def describe_transactions(self, transactions, user_id):
         """"Expecting transaction to be in format
             {date: '', amount: '', location: '', description: '', source: ''}
         """
@@ -50,7 +56,8 @@ class PredictionModel(object):
             item_found = Transaction.objects.filter(
                 date=item['date'],
                 location=item['location'],
-                amount=item['amount']
+                amount=item['amount'],
+                user_id=user_id
             )
             if not item_found:
                 ##Vectorize location

@@ -62,6 +62,7 @@ createNewSheet() {
     const tableRows = this.state.tableRows
     const title = this.state.title
     const tableKeys = this.state.tableKeys
+    const userId = this.props.userId
     $.ajax({
         url: 'http://localhost:8000/api/v1/add_data/',
         type: "POST",      
@@ -69,7 +70,7 @@ createNewSheet() {
         accept: 'application/json',        
         crossDomain: true,        
         dataType : "json",        
-        data: JSON.stringify({tableRows, title, tableKeys}),
+        data: JSON.stringify({tableRows, title, tableKeys, userId}),
         dataType: 'json',
         success: function (data) {
           if (data) {
@@ -99,6 +100,7 @@ appendToSheet() {
     const tableRows = this.state.tableRows
     const title = this.state.title
     const tableKeys = this.state.tableKeys
+    const userId = this.props.userId
     $.ajax({
         url: 'http://localhost:8000/api/v1/add_data/',
         type: "PUT",      
@@ -106,7 +108,7 @@ appendToSheet() {
         accept: 'application/json',        
         crossDomain: true,        
         dataType : "json",        
-        data: JSON.stringify({tableRows, title, tableKeys}),
+        data: JSON.stringify({tableRows, title, tableKeys, userId}),
         dataType: 'json',
         success: function (data) {
           if (data) {
