@@ -23,13 +23,21 @@ const hintFields = [
 ]
 const DisplayTable = createReactClass({  
   getInitialState() {
+    // console.log(rows, 'rows')
+    // const rows = map(
+    //     (x) => {
+    //         x[1] = 'Amount Placeholder'
+    //         return x
+    //     }
+    // )(this.props.tablerows)
+    // console.log(rows, 'rows')
          return {
              headers: this.props.tablekeys,
              tableRows: this.props.tablerows            
          };
      },
   removeRow(rowIndex) {
-        const rows = this.state.tableRows;
+        let rows = this.state.tableRows;
         rows.splice(rowIndex, 1)
         this.setState({
             tableRows: rows
